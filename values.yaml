@@ -1,0 +1,49 @@
+promtail:
+  enabled: true
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+    scrape_configs:
+      - job_name: kubernetes-pods
+        pipeline_stages:
+          - docker: {}
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace]
+            action: keep
+            regex: (monitoring|configuration-server|postgres_ns)  # Namespace-urile dorite
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: container
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+grafana:
+  enabled: true
+  adminPassword: "admin"  # Setează o parolă sigură
+  sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+          isDefault: true
+          editable: true
+        - name: Loki
+          type: loki
+          access: proxy
+          url: http://loki.monitoring.svc.cluster.local:3100
+          editable: true
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: false

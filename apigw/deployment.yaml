@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigw-service
+  namespace: configuration-server
+  labels:
+    app: apigw-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigw-service
+  template:
+    metadata:
+      labels:
+        app: apigw-service
+    spec:
+      containers:
+        - name: apigw-service-ms
+          image: apigw-image-1:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8001
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"

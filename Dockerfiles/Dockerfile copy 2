@@ -1,0 +1,9 @@
+FROM openjdk:22-slim
+
+WORKDIR /app
+
+COPY product-service/target/product-service-0.0.1-SNAPSHOT-exec.jar app.jar
+
+EXPOSE 8004
+
+CMD ["java", "-jar", "app.jar"]

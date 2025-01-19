@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configuration-server
+  namespace: configuration-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: configuration-server
+  template:
+    metadata:
+      labels:
+        app: configuration-server
+    spec:
+      containers:
+      - name: configuration-server
+        image: config-ns:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8888
